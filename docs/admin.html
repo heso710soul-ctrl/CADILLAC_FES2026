@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>掲示板の管理 | キャディラック祭り 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Pacifico&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin { max-width: 820px; margin: 0 auto; padding: 32px 16px 80px; }
+    .admin h1 { font-family: var(--title); font-weight: 400; color: var(--pink); font-size: 26px; margin: 0 0 20px; }
+    .login { display: flex; gap: 10px; max-width: 480px; }
+    .login .btn { white-space: nowrap; }
+    .toolbar { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; }
+    .comment { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
+    .del { font: 700 13px var(--body); background: none; border: 1px solid var(--line); color: var(--err); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+    .del:hover { border-color: var(--err); }
+  </style>
+</head>
+<body>
+  <main class="admin">
+    <h1>掲示板の管理</h1>
+
+    <form id="login" class="login">
+      <input id="token" type="password" placeholder="合言葉（ADMIN_TOKEN）" autocomplete="current-password" required>
+      <button class="btn" type="submit">表示</button>
+    </form>
+    <p id="admin-msg" class="form-msg err"></p>
+
+    <div id="panel" hidden>
+      <div class="toolbar">
+        <button id="reload" class="btn btn-ghost" type="button">最新にする</button>
+      </div>
+      <p class="muted">不適切な書き込みは「削除」で消せます（元に戻せません）。</p>
+      <ol id="comments" class="comments"></ol>
+    </div>
+  </main>
+  <script src="admin.js" defer></script>
+</body>
+</html>
