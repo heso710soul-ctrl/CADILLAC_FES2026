@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>掲示板の管理 | キャディラック祭り 2026</title>
+  <title>管理画面 | キャディラック祭り 2026</title>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dela+Gothic+One&family=Pacifico&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <style>
@@ -16,11 +16,27 @@
     .comment { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: start; }
     .del { font: 700 13px var(--body); background: none; border: 1px solid var(--line); color: var(--err); border-radius: 8px; padding: 4px 10px; cursor: pointer; }
     .del:hover { border-color: var(--err); }
+    .admin h2 { font-family: var(--title); font-weight: 400; font-size: 22px; color: var(--teal-deep); margin: 36px 0 12px; }
+    .vote-box { background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; padding: 20px; box-shadow: 5px 5px 0 var(--teal-deep); }
+    .vote-state { font-weight: 900; margin: 0 0 12px; }
+    .vote-state b { padding: 2px 10px; border-radius: 999px; color: var(--paper); background: var(--muted); }
+    .vote-state b.on { background: var(--pink); }
+    .vote-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+    .vote-actions .btn { padding: 10px 22px; font-size: 15px; }
+    .btn-plain { background: var(--paper); color: var(--ink); }
+    .vote-meta { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+    .rank { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    .rank li { display: grid; grid-template-columns: 34px 92px 1fr 52px; align-items: center; gap: 10px; font-weight: 700; }
+    .rank .pos { font-family: var(--num); font-size: 22px; color: var(--muted); text-align: right; }
+    .rank li.top .pos { color: var(--pink); }
+    .rank .bar { height: 14px; border-radius: 999px; background: var(--cream-2); overflow: hidden; }
+    .rank .bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--pink), var(--pink-soft)); border-radius: 999px; }
+    .rank .num { font-family: var(--num); font-size: 22px; text-align: right; }
   </style>
 </head>
 <body>
   <main class="admin">
-    <h1>掲示板の管理</h1>
+    <h1>管理画面</h1>
 
     <form id="login" class="login">
       <input id="token" type="password" placeholder="合言葉（ADMIN_TOKEN）" autocomplete="current-password" required>
@@ -32,6 +48,20 @@
       <div class="toolbar">
         <button id="reload" class="btn btn-ghost" type="button">最新にする</button>
       </div>
+
+      <h2>やぶ信賞 MVP投票</h2>
+      <div class="vote-box">
+        <p class="vote-state">受付状況：<b id="vote-state">—</b></p>
+        <div class="vote-actions">
+          <button id="vote-open" class="btn" type="button">投票を開始する</button>
+          <button id="vote-close" class="btn btn-ghost" type="button">締め切る</button>
+          <button id="vote-reset" class="btn btn-plain" type="button">票をすべて消す</button>
+        </div>
+        <p id="vote-meta" class="vote-meta"></p>
+        <ol id="rank" class="rank"></ol>
+      </div>
+
+      <h2>掲示板</h2>
       <p class="muted">不適切な書き込みは「削除」で消せます（元に戻せません）。</p>
       <ol id="comments" class="comments"></ol>
     </div>

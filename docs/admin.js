@@ -24,24 +24,29 @@ async function deleteComment(id) {
   if (!res.ok) throw Object.assign(new Error(out.error || 'エラーが発生しました。'), { status: res.status });
 }
 
-async function checkToken() {
-  // 存在しないIDを消そうとして、合言葉が正しいか（404）違うか（401）を確かめる
-  const res = await fetch('api/admin/comments/0', { method: 'DELETE', headers: { authorization: `Bearer ${token}` } });
-  if (res.status === 401) throw Object.assign(new Error('合言葉が違います。'), { status: 401 });
+async function adminApi(path, options = {}) {
+  const res = await fetch(path, {
+    ...options,
+    headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+  });
   if (!(res.headers.get('content-type') || '').includes('application/json')) {
-    throw new Error('掲示板のサーバー機能が見つかりません（Cloudflareで公開したときに使えます）。');
+    throw new Error('サーバー機能が見つかりません（Cloudflareで公開したときに使えます）。');
   }
+  const out = await res.json();
+  if (res.status === 401) throw Object.assign(new Error('合言葉が違います。'), { status: 401 });
+  if (!res.ok) throw new Error(out.error || 'エラーが発生しました。');
+  return out;
 }
 
 async function load() {
   $('#admin-msg').textContent = '';
   try {
-    await checkToken();
-    const res = await fetch('api/comments');
-    const { comments } = await res.json();
+    const vote = await adminApi('api/admin/vote');
+    const { comments } = await (await fetch('api/comments')).json();
     try { sessionStorage.setItem(KEY, token); } catch {}
     $('#login').hidden = true;
     $('#panel').hidden = false;
+    renderVote(vote);
     render(comments);
   } catch (err) {
     if (err.status === 401) {
@@ -50,6 +55,43 @@ async function load() {
       $('#login').hidden = false;
       $('#panel').hidden = true;
     }
+    $('#admin-msg').textContent = err.message;
+  }
+}
+
+function renderVote(v) {
+  const state = $('#vote-state');
+  state.textContent = v.open ? '受付中' : '停止中';
+  state.className = v.open ? 'on' : '';
+  $('#vote-open').disabled = v.open;
+  $('#vote-close').disabled = !v.open;
+  $('#vote-meta').textContent = v.total
+    ? `総投票数 ${v.total}票／最終投票 ${formatDate(v.last)}`
+    : 'まだ投票はありません。';
+
+  const max = Math.max(1, ...v.ranking.map((r) => r.votes));
+  const list = $('#rank');
+  list.replaceChildren();
+  let pos = 0, prev = null;
+  v.ranking.forEach((r, i) => {
+    if (r.votes !== prev) { pos = i + 1; prev = r.votes; }
+    const li = el('li', r.votes && pos <= 3 ? 'top' : '');
+    const bar = el('span', 'bar');
+    const fill = el('i');
+    fill.style.width = `${(r.votes / max) * 100}%`;
+    bar.append(fill);
+    li.title = r.bands.join('・') + 'バンド';
+    li.append(el('span', 'pos', r.votes ? String(pos) : '–'), el('span', null, r.name), bar, el('span', 'num', String(r.votes)));
+    list.append(li);
+  });
+}
+
+async function voteAction(action, confirmText) {
+  if (confirmText && !confirm(confirmText)) return;
+  try {
+    await adminApi('api/admin/vote', { method: 'POST', body: JSON.stringify({ action }) });
+    load();
+  } catch (err) {
     $('#admin-msg').textContent = err.message;
   }
 }
@@ -82,5 +124,10 @@ $('#login').addEventListener('submit', (e) => {
   load();
 });
 $('#reload').addEventListener('click', load);
+$('#vote-open').addEventListener('click', () => voteAction('open', '投票の受付を開始しますか？'));
+$('#vote-close').addEventListener('click', () => voteAction('close', '投票を締め切りますか？'));
+$('#vote-reset').addEventListener('click', () => voteAction('reset', 'これまでの票をすべて消します。元に戻せません。よろしいですか？'));
+// 開いている間は20秒ごとに結果を更新
+setInterval(() => { if (token && !$('#panel').hidden && !document.hidden) load(); }, 20000);
 
 if (token) load();

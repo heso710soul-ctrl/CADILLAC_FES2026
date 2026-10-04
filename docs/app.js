@@ -90,6 +90,104 @@ async function initBoard() {
   });
 }
 
-// 掲示板が出るまでナビのリンクも隠しておく
-document.querySelectorAll('[data-board-link]').forEach((a) => (a.hidden = true));
+/* ===== MVP投票 ===== */
+async function fetchVote() {
+  const res = await fetch('api/vote', { headers: { accept: 'application/json' }, credentials: 'same-origin' });
+  if (!res.ok || !(res.headers.get('content-type') || '').includes('application/json')) {
+    throw new Error('unavailable');
+  }
+  return res.json();
+}
+
+function renderVote(state) {
+  const status = $('#vote-status');
+  const form = $('#vote-form');
+  const list = $('#vote-list');
+  const mine = state.candidates.find((c) => c.id === state.myVote);
+
+  if (!state.open) {
+    form.hidden = true;
+    status.className = 'vote-status';
+    status.textContent = mine
+      ? `投票は締め切りました。あなたの投票：${mine.name}さん。結果発表をお楽しみに！`
+      : '投票はまだ受け付けていません。当日、会場で受付開始のアナウンスがあります。';
+    return;
+  }
+
+  form.hidden = false;
+  status.className = mine ? 'vote-status is-voted' : 'vote-status is-open';
+  status.textContent = mine
+    ? `${mine.name}さんに投票済みです。締め切りまでは選び直せます。`
+    : '投票受付中！ 面白かった人を1人えらんでください。';
+
+  const checked = $('input[name="candidate_id"]:checked', list)?.value;
+  list.replaceChildren();
+  for (const c of state.candidates) {
+    const label = el('label', 'vote-option' + (c.id === state.myVote ? ' is-mine' : ''));
+    const input = el('input');
+    Object.assign(input, { type: 'radio', name: 'candidate_id', value: c.id });
+    if (String(c.id) === (checked ?? String(state.myVote))) input.checked = true;
+    label.append(input, el('strong', null, c.name), el('small', null, c.bands.join('・') + 'バンド'));
+    list.append(label);
+  }
+}
+
+async function initVote() {
+  const section = $('#vote');
+  if (!section) return;
+  let state;
+  try {
+    state = await fetchVote();
+  } catch {
+    return; // サーバー機能なし → 投票欄は出さない
+  }
+  section.hidden = false;
+  document.querySelectorAll('[data-vote-link]').forEach((a) => (a.hidden = false));
+  renderVote(state);
+
+  // 受付開始・締め切りを反映するため、ページを開いている間は30秒ごとに確認
+  setInterval(async () => {
+    if (document.hidden) return;
+    try { state = await fetchVote(); renderVote(state); } catch {}
+  }, 30000);
+
+  $('#vote-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = $('#vote-msg');
+    const btn = $('button', e.currentTarget);
+    const picked = $('input[name="candidate_id"]:checked', e.currentTarget);
+    if (!picked) {
+      msg.className = 'form-msg err';
+      msg.textContent = '投票する人をえらんでください。';
+      return;
+    }
+    btn.disabled = true;
+    msg.className = 'form-msg';
+    msg.textContent = '送信中…';
+    try {
+      const res = await fetch('api/vote', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ candidate_id: Number(picked.value) }),
+      });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(out.error || '送信できませんでした。時間をおいてお試しください。');
+      state = await fetchVote();
+      renderVote(state);
+      const name = state.candidates.find((c) => c.id === out.myVote)?.name;
+      msg.className = 'form-msg ok';
+      msg.textContent = `${name}さんに投票しました！ありがとうございます。`;
+    } catch (err) {
+      msg.className = 'form-msg err';
+      msg.textContent = err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  });
+}
+
+// 掲示板・投票が出るまでナビのリンクも隠しておく
+document.querySelectorAll('[data-board-link], [data-vote-link]').forEach((a) => (a.hidden = true));
 initBoard();
+initVote();

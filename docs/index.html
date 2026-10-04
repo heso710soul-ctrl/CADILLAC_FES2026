@@ -22,6 +22,7 @@
       <a href="#about">概要</a>
       <a href="#lineup">出演</a>
       <a href="#awards">賞</a>
+      <a href="#vote" data-vote-link>投票</a>
       <a href="#board" data-board-link>掲示板</a>
       <a href="#access">アクセス</a>
     </nav>
@@ -300,6 +301,25 @@
           <p class="award-basis">タッチーの独自基準（詳細非公開）</p>
         </article>
       </div>
+    </section>
+
+    <!-- ===== MVP投票 ===== -->
+    <section id="vote" class="section" hidden>
+      <div class="section-head">
+        <p class="eyebrow">Vote</p>
+        <h2>やぶ信賞 MVP投票</h2>
+      </div>
+      <p class="prose">今日いちばん「面白かった！」と思った人に1票（演奏の上手さは関係なし）。出演者もお客さんも投票できます。</p>
+      <div id="vote-status" class="vote-status" role="status" aria-live="polite"></div>
+      <form id="vote-form" class="card form" novalidate hidden>
+        <fieldset>
+          <legend>面白かった人を1人えらぶ</legend>
+          <div id="vote-list" class="vote-list"></div>
+        </fieldset>
+        <button class="btn" type="submit">この人に投票する</button>
+        <p id="vote-msg" class="form-msg" role="status" aria-live="polite"></p>
+        <p class="vote-note">1台のスマホにつき1票です。締め切りまでは選び直せます。</p>
+      </form>
     </section>
 
     <!-- ===== 掲示板 ===== -->
