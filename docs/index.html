@@ -21,9 +21,9 @@
     <nav class="nav" aria-label="ページ内メニュー">
       <a href="#about">概要</a>
       <a href="#lineup">出演</a>
-      <a href="#awards">賞</a>
       <a href="#vote" data-vote-link>投票</a>
       <a href="#board" data-board-link>掲示板</a>
+      <a href="#awards">賞</a>
       <a href="#access">アクセス</a>
     </nav>
   </header>
@@ -252,6 +252,50 @@
       <p class="lineup-note">バンド名をタップすると、メンバーと演奏曲が表示されます</p>
     </section>
 
+    <!-- ===== MVP投票 ===== -->
+    <section id="vote" class="section" hidden>
+      <div class="section-head">
+        <p class="eyebrow">Vote</p>
+        <h2>やぶ信賞 MVP投票</h2>
+      </div>
+      <p class="prose">今日いちばん「面白かった！」と思った人に1票（演奏の上手さは関係なし）。出演者もお客さんも投票できます。</p>
+      <div id="vote-status" class="vote-status" role="status" aria-live="polite"></div>
+      <form id="vote-form" class="card form" novalidate hidden>
+        <fieldset>
+          <legend>面白かった人を1人えらぶ</legend>
+          <div id="vote-list" class="vote-list"></div>
+        </fieldset>
+        <button class="btn" type="submit">この人に投票する</button>
+        <p id="vote-msg" class="form-msg" role="status" aria-live="polite"></p>
+        <p class="vote-note">1台のスマホにつき1票です。締め切りまでは選び直せます。</p>
+      </form>
+    </section>
+
+    <!-- ===== 掲示板 ===== -->
+    <section id="board" class="section" hidden>
+      <div class="section-head">
+        <p class="eyebrow">Message board</p>
+        <h2>掲示板</h2>
+      </div>
+      <p class="prose">楽しみにしていること、バンドへの応援、当日の感想など、自由に書き込んでください。</p>
+
+      <form id="comment-form" class="card form" novalidate>
+        <label class="field">
+          <span>お名前（空欄なら「名無しさん」）</span>
+          <input name="name" maxlength="30" autocomplete="nickname">
+        </label>
+        <label class="field">
+          <span>メッセージ <b>必須</b></span>
+          <textarea name="message" rows="3" required maxlength="500"></textarea>
+        </label>
+        <label class="hp" aria-hidden="true">website<input name="website" tabindex="-1" autocomplete="off"></label>
+        <button class="btn btn-ghost" type="submit">書き込む</button>
+        <p id="comment-msg" class="form-msg" role="status" aria-live="polite"></p>
+      </form>
+
+      <ol id="comment-list" class="comments"><li class="muted">読み込み中…</li></ol>
+    </section>
+
     <!-- ===== 賞・賞金 ===== -->
     <section id="awards" class="section">
       <div class="section-head">
@@ -301,50 +345,6 @@
           <p class="award-basis">タッチーの独自基準（詳細非公開）</p>
         </article>
       </div>
-    </section>
-
-    <!-- ===== MVP投票 ===== -->
-    <section id="vote" class="section" hidden>
-      <div class="section-head">
-        <p class="eyebrow">Vote</p>
-        <h2>やぶ信賞 MVP投票</h2>
-      </div>
-      <p class="prose">今日いちばん「面白かった！」と思った人に1票（演奏の上手さは関係なし）。出演者もお客さんも投票できます。</p>
-      <div id="vote-status" class="vote-status" role="status" aria-live="polite"></div>
-      <form id="vote-form" class="card form" novalidate hidden>
-        <fieldset>
-          <legend>面白かった人を1人えらぶ</legend>
-          <div id="vote-list" class="vote-list"></div>
-        </fieldset>
-        <button class="btn" type="submit">この人に投票する</button>
-        <p id="vote-msg" class="form-msg" role="status" aria-live="polite"></p>
-        <p class="vote-note">1台のスマホにつき1票です。締め切りまでは選び直せます。</p>
-      </form>
-    </section>
-
-    <!-- ===== 掲示板 ===== -->
-    <section id="board" class="section" hidden>
-      <div class="section-head">
-        <p class="eyebrow">Message board</p>
-        <h2>掲示板</h2>
-      </div>
-      <p class="prose">楽しみにしていること、バンドへの応援、当日の感想など、自由に書き込んでください。</p>
-
-      <form id="comment-form" class="card form" novalidate>
-        <label class="field">
-          <span>お名前（空欄なら「名無しさん」）</span>
-          <input name="name" maxlength="30" autocomplete="nickname">
-        </label>
-        <label class="field">
-          <span>メッセージ <b>必須</b></span>
-          <textarea name="message" rows="3" required maxlength="500"></textarea>
-        </label>
-        <label class="hp" aria-hidden="true">website<input name="website" tabindex="-1" autocomplete="off"></label>
-        <button class="btn btn-ghost" type="submit">書き込む</button>
-        <p id="comment-msg" class="form-msg" role="status" aria-live="polite"></p>
-      </form>
-
-      <ol id="comment-list" class="comments"><li class="muted">読み込み中…</li></ol>
     </section>
 
     <!-- ===== アクセス ===== -->
