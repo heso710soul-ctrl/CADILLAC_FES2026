@@ -181,6 +181,34 @@ img { max-width: 100%; height: auto; display: block; }
 @keyframes open { from { opacity: 0; transform: translateY(-6px); } }
 .lineup-note { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
 
+/* ---------- awards ---------- */
+.awards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.award-span { grid-column: 1 / -1; }
+.award {
+  background: var(--paper); border: 3px solid var(--ink); border-radius: var(--radius);
+  padding: 20px 22px; box-shadow: 4px 4px 0 var(--pink);
+}
+.award:nth-of-type(2n) { box-shadow: 4px 4px 0 var(--teal); }
+.award-main { background: linear-gradient(135deg, #fff6e3, var(--paper)); text-align: center; }
+.award h3 { font-family: var(--title); font-weight: 400; font-size: 21px; margin: 0 0 6px; line-height: 1.4; }
+.award h3 small {
+  font-family: var(--body); font-weight: 900; font-size: 12px; vertical-align: 3px;
+  background: var(--teal-deep); color: var(--paper); border-radius: 999px; padding: 2px 10px; margin-left: 4px;
+}
+.award b { font-family: var(--num); font-weight: 400; font-size: 34px; color: var(--pink); letter-spacing: .03em; margin: 0 2px; line-height: 1.1; }
+.award-prize { margin: 0; font-weight: 700; }
+.award-basis { font-size: 13px; color: var(--muted); margin: 6px 0 0; line-height: 1.6; }
+p.award-basis.award-span { margin: -4px 0 6px; text-align: center; }
+.award-ranks { list-style: none; padding: 0; margin: 4px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.award-ranks li { text-align: center; background: var(--cream-2); border-radius: 12px; padding: 10px 6px; font-weight: 700; }
+.award-ranks li span { display: block; font-size: 13px; color: var(--teal-deep); font-weight: 900; }
+.award-ranks li:first-child { background: #fde8ee; }
+.award-list { margin: 0; display: grid; gap: 12px; }
+.award-list div { border-top: 2px dashed var(--line); padding-top: 10px; }
+.award-list div:first-child { border-top: 0; padding-top: 0; }
+.award-list dt { font-weight: 900; color: var(--teal-deep); }
+.award-list dd { margin: 0; font-weight: 700; }
+
 /* ---------- forms ---------- */
 .card { background: var(--paper); border: 3px solid var(--ink); border-radius: var(--radius); padding: 24px; box-shadow: 6px 6px 0 var(--teal-deep); }
 .form { display: grid; gap: 18px; }
@@ -248,4 +276,7 @@ input:focus, select:focus, textarea:focus { outline: 3px solid var(--pink-soft);
   .info div { grid-template-columns: 64px 1fr; gap: 12px; }
   .card { padding: 18px; box-shadow: 4px 4px 0 var(--teal-deep); }
   .sponsors { grid-template-columns: 1fr; }
+  .awards { grid-template-columns: 1fr; }
+  .award b { font-size: 30px; }
+  .award-ranks li b { font-size: 24px; }
 }
